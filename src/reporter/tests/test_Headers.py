@@ -78,7 +78,7 @@ def test_for_invalid_headers(notification):
     res_get = requests.get(get_url, headers=HEADERS_INVALID)
 
     assert res_get.status_code == 200
-    assert r.json() == []
+    assert res_get.json() == []
 
     exp_result = {
         'description': 'No records were found for such query.',

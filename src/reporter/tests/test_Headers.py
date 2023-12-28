@@ -80,7 +80,5 @@ def test_for_invalid_headers(notification):
     assert res_get.status_code == 200
     assert res_get.json() == []
 
-    exp_result = {
-        'description': 'No records were found for such query.',
-        'error': 'Not Found'}
+    exp_result = []
     assert res_get.json() == exp_result

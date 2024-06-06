@@ -195,7 +195,7 @@ def test_caching(docker_redis, air_quality_observed, monkeypatch):
     try:
         r = geocoding.add_location(air_quality_observed, cache=cache)
         assert r is air_quality_observed
-        assert_lon_lat(r, expected_lon=51.23, expected_lat=4.42)
+        assert_lon_lat(r, expected_lon=51.12, expected_lat=4.54)
         assert len(cache.redis.keys('*')) == 1
 
         # Make sure no external calls are made

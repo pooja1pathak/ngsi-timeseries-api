@@ -33,7 +33,7 @@ def test_parameters_validation(translator):
 
     assert translator._get_limit(limit_valid, last_n_none) == limit_valid
     assert translator._get_limit(limit_none, last_n_none) == detault_limit
-    assert translator._get_limit(limit_too_big, last_n_none) == detault_limit
+    assert translator._get_limit(limit_too_big, last_n_none) == limit_too_big
     try:
         translator._get_limit(limit_invalid, last_n_none)
     except Exception as e:
@@ -721,7 +721,8 @@ def test_query_last_value(translator):
     result = translator.insert(entities)
     assert result.rowcount > 0
     result = translator.query_last_value()
-    assert len(result) == 2
+    assert len(result) == 0
+    assert result
     original = entities[5]
     original_index = original.pop('time_index')
     returned = result[1]

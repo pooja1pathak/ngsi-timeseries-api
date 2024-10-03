@@ -9,6 +9,8 @@ QL_URL = os.environ.get("QL_URL", "http://localhost:8668")
 ORION_URL = os.environ.get("ORION_URL", "http://localhost:1026")
 ORION_URL_4QL = os.environ.get("ORION_URL_4QL", "http://orion:1026")
 QL_URL_4ORION = os.environ.get("QL_URL_4ORION", "http://quantumleap:8668")
+QL_URL_4ORION_MQTT = os.environ.get("QL_URL_4ORION_MQTT", "mqtt://quantumleap:1883")
+MQTT_TOPIC = os.environ.get("MQTT_TOPIC", "/ql/mqtt")
 
 # HELPER VARIABLES
 UPDATES = 3

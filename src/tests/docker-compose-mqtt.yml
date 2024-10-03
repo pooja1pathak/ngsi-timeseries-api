@@ -1,0 +1,96 @@
+version: '3'
+
+services:
+
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+
+  orion:
+    image: fiware/orion:${ORION_VERSION:-2.6.1}
+    ports:
+      - "1026:1026"
+    command: -logLevel DEBUG -noCache -dbhost mongo
+    depends_on:
+      - mongo
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:1026/version" ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+
+  mongo:
+    image: mongo:${MONGO_VERSION:-4.4}
+    ports:
+      - "27017:27017"
+
+  quantumleap:
+    image: orchestracities/quantumleap:${QL_VERSION:-latest}
+    sysctls:
+      net.core.somaxconn: 4096
+    ports:
+      - "8668:8668"
+    depends_on:
+      - mongo
+      - orion
+      - crate
+    environment:
+      - CRATE_HOST=${CRATE_HOST:-crate}
+      - USE_GEOCODING=False
+      - CACHE_QUERIES=True
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LOGLEVEL=INFO
+      - USE_MQTT=True
+
+  timescale:
+          #image: timescale/timescaledb-postgis:${TIMESCALE_VERSION}
+    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION:-2.3.0-pg13}
+    ports:
+      - "5432:5432"
+      # Don't expose container port 5432 with the same number outside of the
+      # swarm. In the Travis test env, there's already a PG instance running
+      # on port 5432!
+    environment:
+      - POSTGRES_PASSWORD=*
+
+  quantumleap-db-setup:
+    build: ../../timescale-container/
+    image: quantumleap-db-setup
+    depends_on:
+      - timescale
+    environment:
+      - QL_DB_PASS=*
+      - QL_DB_INIT_DIR=/ql-db-init
+      - PG_HOST=timescale
+      - PG_PASS=*
+
+  crate:
+    image: crate:${CRATE_VERSION:-4.5.1}
+    command: crate -Cauth.host_based.enabled=true
+      -Cauth.host_based.config.0.user=crate
+      -Cauth.host_based.config.0.address=_local_
+      -Cauth.host_based.config.0.method=trust
+      -Cauth.host_based.config.1.user=crate
+      -Cauth.host_based.config.1.address=0.0.0.0/0
+      -Cauth.host_based.config.1.method=trust
+      -Cauth.host_based.config.99.method=password -Ccluster.name=democluster
+      -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
+    ports:
+      # Admin UI
+      - "4200:4200"
+      # Transport protocol
+      - "4300:4300"
+
+  redis:
+    image: redis:${REDIS_VERSION:-6.2.3}
+    ports:
+      - "6379:6379"
+
+networks:
+  default: null

@@ -87,4 +87,39 @@ cd -
 
 docker-compose -f docker-compose-bc.yml down -v
 
+# Restart QL on development version and CRATE on current version with MQTT configuration
+echo "\n"
+echo "Use current version of ql and crate"
+
+CRATE_VERSION=${CRATE_VERSION} QL_VERSION=latest docker-compose -f docker-compose-bc.yml stop quantumleap crate
+CRATE_VERSION=${CRATE_VERSION} QL_VERSION=latest docker-compose -f docker-compose-mqtt.yml up -d
+
+wait=0
+while [ "$(curl -s -o /dev/null -L -w ''%{http_code}'' $HOST)" != "200" ] && [ $wait -le 30 ]
+do
+  echo "Waiting for $HOST"
+  sleep 5
+  wait=$((wait+5))
+  echo "Elapsed time: $wait"
+done
+
+if [ $wait -gt 30 ]; then
+  echo "timeout while waiting services to be ready"
+  docker-compose -f docker-compose-mqtt.yml down -v
+  exit -1
+fi
+
+# MQTT Integration Test
+echo "\n"
+echo "MQTT Integration Test"
+pytest -s src/tests/test_integration_mqtt.py --cov-report= --cov-config=.coveragerc --cov-append --cov=src/ \
+    --junitxml=test-results/junit-mqtt-it.xml
+loc=$?
+if [ "$tot" -eq 0 ]; then
+  tot=$loc
+fi
+cd -
+
+docker-compose -f docker-compose-mqtt.yml down -v
+
 exit ${tot}

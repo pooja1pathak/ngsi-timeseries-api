@@ -87,11 +87,12 @@ cd -
 
 docker-compose -f docker-compose-bc.yml down -v
 
+
 # Restart QL on development version and CRATE on current version with MQTT configuration
 echo "\n"
-echo "Use current version of ql and crate"
+echo "Use current version of ql and crate  with MQTT configuration"
 
-CRATE_VERSION=${CRATE_VERSION} QL_VERSION=latest docker-compose -f docker-compose-bc.yml stop quantumleap crate
+#CRATE_VERSION=${CRATE_VERSION} QL_VERSION=latest docker-compose -f docker-compose-bc.yml stop quantumleap crate
 CRATE_VERSION=${CRATE_VERSION} QL_VERSION=latest docker-compose -f docker-compose-mqtt.yml up -d
 
 wait=0
@@ -121,5 +122,6 @@ fi
 cd -
 
 docker-compose -f docker-compose-mqtt.yml down -v
+
 
 exit ${tot}

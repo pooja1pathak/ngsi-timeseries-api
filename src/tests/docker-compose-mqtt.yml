@@ -59,16 +59,16 @@ services:
       #    environment:
       #      - POSTGRES_PASSWORD=*
 
-  quantumleap-db-setup:
-    build: ../../timescale-container/
-    image: quantumleap-db-setup
-    depends_on:
-      - timescale
-    environment:
-      - QL_DB_PASS=*
-      - QL_DB_INIT_DIR=/ql-db-init
-      - PG_HOST=timescale
-      - PG_PASS=*
+        #  quantumleap-db-setup:
+        #    build: ../../timescale-container/
+        #    image: quantumleap-db-setup
+        #    depends_on:
+        #      - timescale
+        #    environment:
+        #      - QL_DB_PASS=*
+        #      - QL_DB_INIT_DIR=/ql-db-init
+        #      - PG_HOST=timescale
+        #      - PG_PASS=*
 
   crate:
     image: crate:${CRATE_VERSION:-4.5.1}

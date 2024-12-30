@@ -49,8 +49,8 @@ services:
       - USE_MQTT=True
 
   timescale:
-          #image: timescale/timescaledb-postgis:${TIMESCALE_VERSION}
-    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION:-2.3.0-pg13}
+    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION}
+          #    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION:-2.3.0-pg13}
     ports:
       - "5432:5432"
       # Don't expose container port 5432 with the same number outside of the

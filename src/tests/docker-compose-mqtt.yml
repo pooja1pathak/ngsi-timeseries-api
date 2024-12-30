@@ -48,16 +48,16 @@ services:
       - LOGLEVEL=INFO
       - USE_MQTT=True
 
-  timescale:
-    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION}
+        #  timescale:
+        #    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION}
           #    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION:-2.3.0-pg13}
-    ports:
-      - "5432:5432"
+          #    ports:
+          #      - "5432:5432"
       # Don't expose container port 5432 with the same number outside of the
       # swarm. In the Travis test env, there's already a PG instance running
       # on port 5432!
-    environment:
-      - POSTGRES_PASSWORD=*
+      #    environment:
+      #      - POSTGRES_PASSWORD=*
 
   quantumleap-db-setup:
     build: ../../timescale-container/

@@ -5,7 +5,7 @@ docs/
 env/
 src/translators/plots/
 Dockerfile
-
+node_modules/
 # PYTHON FILES
 **__pycache__/
 .pyc
